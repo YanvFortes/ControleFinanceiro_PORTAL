@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.forced-margin-top {
+    margin-top: 0 !important;
+}
