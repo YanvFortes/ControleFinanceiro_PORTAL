@@ -6,6 +6,12 @@ interface Props {
   onClose: () => void;
 }
 
+/**
+ * Modal responsável por criação/edição de Usuário.
+ *
+ * - Reutiliza UsuarioForm
+ * - Controlado externamente
+ */
 export default function UsuarioModal({ usuario, onClose }: Props) {
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">

@@ -10,9 +10,19 @@ import UsuarioModal from "./UsuarioModal";
 import type { UsuarioDTO } from "../../core/types/usuario";
 import { toastError } from "../../core/utils/toast";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import { useDocumentTitle } from "../../core/hooks/useDocumentTitle";
 import { Plus, Pencil, Trash2, Users } from "lucide-react";
 
+/**
+ * Página de listagem de Usuários.
+ *
+ * - Paginação server-side
+ * - Busca por nome/email
+ * - Modal para criação/edição
+ * - Confirmação para exclusão
+ */
 export default function UsuariosPage() {
+  useDocumentTitle("Usuários");
   const [rows, setRows] = useState<UsuarioDTO[]>([]);
   const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -31,6 +41,9 @@ export default function UsuariosPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  /**
+   * Carrega usuários da API com paginação e filtro.
+   */
   async function carregar() {
     try {
       setLoading(true);
@@ -50,10 +63,14 @@ export default function UsuariosPage() {
     }
   }
 
+  // Recarrega dados sempre que paginação ou busca mudarem
   useEffect(() => {
     carregar();
   }, [paginationModel.page, paginationModel.pageSize, search]);
 
+  /**
+   * Definição das colunas do DataGrid.
+   */
   const columns: GridColDef[] = [
     {
       field: "dataCriacao",
@@ -106,6 +123,8 @@ export default function UsuariosPage() {
 
   return (
     <div className="space-y-6">
+
+      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Users size={22} />
@@ -124,6 +143,7 @@ export default function UsuariosPage() {
         </button>
       </div>
 
+      {/* Card */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 transition-colors">
         <div className="mb-4">
           <TextField
@@ -153,6 +173,7 @@ export default function UsuariosPage() {
         </div>
       </div>
 
+      {/* Modal */}
       {modalOpen && (
         <UsuarioModal
           usuario={selected}
@@ -163,6 +184,7 @@ export default function UsuariosPage() {
         />
       )}
 
+      {/* Confirmação de exclusão */}
       <ConfirmDialog
         open={confirmOpen}
         title="Excluir usuário"

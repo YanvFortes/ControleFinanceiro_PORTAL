@@ -16,6 +16,13 @@ interface Props {
   onSuccess: () => void;
 }
 
+/**
+ * Formulário de criação/edição de Usuário.
+ *
+ * - Integra react-hook-form + zod
+ * - Carrega dinamicamente os tipos de usuário
+ * - Omite senha na edição
+ */
 export default function UsuarioForm({ usuario, onSuccess }: Props) {
   const [loading, setLoading] = useState(false);
   const [tipos, setTipos] = useState<TipoUsuarioDTO[]>([]);
@@ -31,11 +38,14 @@ export default function UsuarioForm({ usuario, onSuccess }: Props) {
       email: usuario?.email ?? "",
       senha: "",
       tipoUsuario: usuario
-        ? tipos.find(t => t.id === usuario.tipoUsuarioId)?.name ?? ""
+        ? tipos.find((t) => t.id === usuario.tipoUsuarioId)?.name ?? ""
         : "",
     },
   });
 
+  /**
+   * Carrega tipos de usuário para popular o select.
+   */
   useEffect(() => {
     async function carregarTipos() {
       try {
@@ -56,6 +66,10 @@ export default function UsuarioForm({ usuario, onSuccess }: Props) {
     carregarTipos();
   }, []);
 
+  /**
+   * Submissão do formulário.
+   * Define tipoUsuarioId e decide entre create/update.
+   */
   async function onSubmit(data: UsuarioFormData) {
     try {
       setLoading(true);
@@ -101,8 +115,8 @@ export default function UsuarioForm({ usuario, onSuccess }: Props) {
         <input
           {...register("nome")}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-        bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
-        focus:ring-2 focus:ring-blue-500 outline-none transition"
+          bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
+          focus:ring-2 focus:ring-blue-500 outline-none transition"
         />
         {errors.nome && (
           <p className="text-red-500 text-sm mt-1">
@@ -119,8 +133,8 @@ export default function UsuarioForm({ usuario, onSuccess }: Props) {
         <input
           {...register("email")}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-        bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
-        focus:ring-2 focus:ring-blue-500 outline-none transition"
+          bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
+          focus:ring-2 focus:ring-blue-500 outline-none transition"
         />
         {errors.email && (
           <p className="text-red-500 text-sm mt-1">
@@ -129,7 +143,7 @@ export default function UsuarioForm({ usuario, onSuccess }: Props) {
         )}
       </div>
 
-      {/* Senha */}
+      {/* Senha (somente na criação) */}
       {!usuario && (
         <div>
           <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
@@ -139,8 +153,8 @@ export default function UsuarioForm({ usuario, onSuccess }: Props) {
             type="password"
             {...register("senha")}
             className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-          bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
-          focus:ring-2 focus:ring-blue-500 outline-none transition"
+            bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
+            focus:ring-2 focus:ring-blue-500 outline-none transition"
           />
           {errors.senha && (
             <p className="text-red-500 text-sm mt-1">
@@ -150,7 +164,7 @@ export default function UsuarioForm({ usuario, onSuccess }: Props) {
         </div>
       )}
 
-      {/* Tipo */}
+      {/* Tipo de Usuário */}
       <div>
         <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
           Tipo de Usuário
@@ -158,8 +172,8 @@ export default function UsuarioForm({ usuario, onSuccess }: Props) {
         <select
           {...register("tipoUsuario")}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-        bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
-        focus:ring-2 focus:ring-blue-500 outline-none transition"
+          bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
+          focus:ring-2 focus:ring-blue-500 outline-none transition"
         >
           <option value="">Selecione...</option>
 
@@ -181,7 +195,7 @@ export default function UsuarioForm({ usuario, onSuccess }: Props) {
         type="submit"
         disabled={loading}
         className="w-full bg-green-600 hover:bg-green-700 
-      text-white py-2.5 rounded-lg transition disabled:opacity-50"
+        text-white py-2.5 rounded-lg transition disabled:opacity-50"
       >
         {loading ? "Salvando..." : "Salvar"}
       </button>

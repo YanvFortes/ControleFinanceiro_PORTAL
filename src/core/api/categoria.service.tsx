@@ -1,11 +1,11 @@
 import { api } from "./axios";
 import type { CategoriaDTO , CategoriaCreateDTO } from "../types/categoria";
 
-export async function listarCategorias(
-  page = 1,
-  pageSize = 10,
-  search?: string
-) {
+/**
+ * Service responsável pelo CRUD de Categorias.
+ */
+
+export async function listarCategorias(page = 1, pageSize = 10, search?: string) {
   const response = await api.get("/Categorias/Get", {
     params: { page, pageSize, search },
   });

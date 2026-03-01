@@ -1,6 +1,13 @@
 import CategoriaForm from "./CategoriaForm";
 import type { CategoriaDTO } from "../../core/types/categoria";
 
+/**
+ * Modal responsável por encapsular o formulário de Categoria.
+ *
+ * - Reutilizado para nova categoria e edição
+ * - Fecha automaticamente após sucesso
+ */
+
 interface Props {
   categoria: CategoriaDTO | null;
   onClose: () => void;

@@ -10,9 +10,19 @@ import PessoaModal from "./PessoaModal";
 import type { PessoaDTO } from "../../core/types/pessoa";
 import { toastError } from "../../core/utils/toast";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import { useDocumentTitle } from "../../core/hooks/useDocumentTitle";
 import { Plus, Pencil, Trash2, User } from "lucide-react";
 
+/**
+ * Página de listagem de Pessoas.
+ *
+ * - Paginação server-side
+ * - Busca por nome
+ * - Modal para criação/edição
+ * - Confirmação para exclusão
+ */
 export default function PessoasPage() {
+  useDocumentTitle("Pessoas");
   const [rows, setRows] = useState<PessoaDTO[]>([]);
   const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -31,6 +41,9 @@ export default function PessoasPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  /**
+   * Carrega pessoas da API com paginação e filtro.
+   */
   async function carregar() {
     try {
       setLoading(true);
@@ -50,10 +63,14 @@ export default function PessoasPage() {
     }
   }
 
+  // Recarrega sempre que paginação ou busca mudarem
   useEffect(() => {
     carregar();
   }, [paginationModel.page, paginationModel.pageSize, search]);
 
+  /**
+   * Definição das colunas do DataGrid.
+   */
   const columns: GridColDef[] = [
     {
       field: "nome",
@@ -105,6 +122,7 @@ export default function PessoasPage() {
 
   return (
     <div className="space-y-6">
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -162,6 +180,7 @@ export default function PessoasPage() {
         </div>
       </div>
 
+      {/* Modal */}
       {modalOpen && (
         <PessoaModal
           pessoa={selected}
@@ -172,6 +191,7 @@ export default function PessoasPage() {
         />
       )}
 
+      {/* Confirmação de exclusão */}
       <ConfirmDialog
         open={confirmOpen}
         title="Excluir pessoa"

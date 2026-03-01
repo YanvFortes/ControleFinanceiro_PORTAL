@@ -9,12 +9,21 @@ import {
   editarCategoria,
 } from "../../core/api/categoria.service";
 
+/**
+ * Formulário de criação/edição de Categoria.
+ *
+ * - Integra react-hook-form + zod
+ * - Reutilizado para create e update
+ * - Dispara callback onSuccess após persistência
+ */
+
 interface Props {
   categoria?: any;
   onSuccess: () => void;
 }
 
 export default function CategoriaForm({ categoria, onSuccess }: Props) {
+    // Estado de controle de submissão
   const [loading, setLoading] = useState(false);
 
   const {
@@ -29,6 +38,10 @@ export default function CategoriaForm({ categoria, onSuccess }: Props) {
     },
   });
 
+   /**
+   * Submissão do formulário.
+   * Decide automaticamente entre cadastrar ou editar.
+   */
   async function onSubmit(data: CategoriaFormData) {
     try {
       setLoading(true);
@@ -50,7 +63,7 @@ export default function CategoriaForm({ categoria, onSuccess }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 forced-margin-top">
 
       {/* Descrição */}
       <div>

@@ -6,6 +6,11 @@ import type {
   DashboardTotaisResponseDTO
 } from "../types/dashboard";
 
+/**
+ * Service responsável por dados agregados do Dashboard.
+ * Utilizado para gráficos e indicadores.
+ */
+
 export async function obterResumo(dias = 7) {
   const response = await api.get("/Dashboard/Resumo", {
     params: { dias },

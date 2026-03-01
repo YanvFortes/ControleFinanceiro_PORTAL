@@ -6,6 +6,13 @@ interface Props {
   onCancel: () => void;
 }
 
+/**
+ * Modal reutilizável para confirmação de ações críticas.
+ *
+ * Controlado externamente via prop `open`.
+ * Executa callbacks distintos para confirmar ou cancelar.
+ * Renderização condicional evita montagem desnecessária no DOM.
+ */
 export default function ConfirmDialog({
   open,
   title = "Confirmar ação",
@@ -13,6 +20,7 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
 }: Props) {
+  // Não renderiza se estiver fechado
   if (!open) return null;
 
   return (
@@ -28,14 +36,17 @@ export default function ConfirmDialog({
           animate-fadeIn
         "
       >
+        {/* Título dinâmico */}
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
           {title}
         </h2>
 
+        {/* Descrição contextual da ação */}
         <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
           {description}
         </p>
 
+        {/* Ações */}
         <div className="flex justify-end gap-3">
           <button
             onClick={onCancel}

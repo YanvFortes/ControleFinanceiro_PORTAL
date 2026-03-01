@@ -1,12 +1,11 @@
 import { api } from "./axios";
-import type { TransacaoDTO } from "../types/transacao";
-import type { CriarTransacaoDTO } from "../types/transacao";
+import type { TransacaoDTO, CriarTransacaoDTO } from "../types/transacao";
 
-export async function listarTransacoes(
-  page = 1,
-  pageSize = 10,
-  search?: string
-) {
+/**
+ * Service responsável pelo CRUD de Transações.
+ */
+
+export async function listarTransacoes(page = 1, pageSize = 10, search?: string) {
   const response = await api.get("/Transacoes/Get", {
     params: { page, pageSize, search },
   });
@@ -25,7 +24,7 @@ export async function cadastrarTransacao(data: CriarTransacaoDTO) {
 }
 
 export async function editarTransacao(id: string, data: CriarTransacaoDTO) {
-  const response = await api.put(`/Transacoes/Atualizar/${id}`, data);
+  const response = await api.put(`/Transacoes/Editar/${id}`, data);
   return response.data;
 }
 
