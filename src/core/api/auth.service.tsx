@@ -7,9 +7,13 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   mensagem: string;
-  conteudo: string;
+  conteudo: string; // JWT
 }
 
+/**
+ * Realiza autenticação do usuário.
+ * Retorna token JWT para controle de sessão.
+ */
 export async function login(data: LoginRequest) {
   const response = await api.post<LoginResponse>(
     "/Autenticacao/Login",

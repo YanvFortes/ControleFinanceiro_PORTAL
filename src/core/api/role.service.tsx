@@ -1,11 +1,11 @@
 import { api } from "./axios";
 import type { TipoUsuarioDTO } from "../types/tipo-usuario";
 
-export async function listarTiposUsuario(
-  page = 1,
-  pageSize = 10,
-  search?: string
-) {
+/**
+ * Service responsável pela gestão de Roles (Tipos de Usuário).
+ */
+
+export async function listarTiposUsuario(page = 1, pageSize = 10, search?: string) {
   const response = await api.get("/Roles/Get", {
     params: { page, pageSize, search },
   });

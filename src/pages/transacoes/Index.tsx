@@ -8,9 +8,20 @@ import {
 } from "../../core/api/transacao.service";
 import TransacaoModal from "./TransacaoModal";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import { useDocumentTitle } from "../../core/hooks/useDocumentTitle";
 import { Plus, Pencil, Trash2, TrendingUp, TrendingDown } from "lucide-react";
 
+/**
+ * Página de listagem de Transações.
+ *
+ * - Paginação server-side
+ * - Busca por descrição
+ * - Exibição diferenciada para receita/despesa
+ * - Modal para criação/edição
+ * - Confirmação para exclusão
+ */
 export default function TransacoesPage() {
+  useDocumentTitle("Transações");
   const [rows, setRows] = useState<any[]>([]);
   const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -29,6 +40,9 @@ export default function TransacoesPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  /**
+   * Carrega transações da API com paginação e filtro.
+   */
   async function carregar() {
     setLoading(true);
 
@@ -46,10 +60,14 @@ export default function TransacoesPage() {
     }
   }
 
+  // Recarrega dados sempre que paginação ou busca mudarem
   useEffect(() => {
     carregar();
   }, [paginationModel.page, paginationModel.pageSize, search]);
 
+  /**
+   * Definição das colunas do DataGrid.
+   */
   const columns: GridColDef[] = [
     {
       field: "dataCriacao",
@@ -60,9 +78,11 @@ export default function TransacoesPage() {
         return date.toLocaleDateString("pt-BR");
       },
     },
-
-    { field: "descricao", headerName: "Descrição", flex: 1 },
-
+    {
+      field: "descricao",
+      headerName: "Descrição",
+      flex: 1,
+    },
     {
       field: "valor",
       headerName: "Valor",
@@ -73,7 +93,6 @@ export default function TransacoesPage() {
         </span>
       ),
     },
-
     {
       field: "tipo",
       headerName: "Tipo",
@@ -91,7 +110,6 @@ export default function TransacoesPage() {
           </div>
         ),
     },
-
     {
       field: "acoes",
       headerName: "Ações",
@@ -126,6 +144,7 @@ export default function TransacoesPage() {
 
   return (
     <div className="space-y-6">
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <h1 className="text-2xl font-bold">Transações</h1>
@@ -144,7 +163,6 @@ export default function TransacoesPage() {
 
       {/* Card */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 transition-colors">
-        {/* Campo de pesquisa */}
         <div className="mb-4">
           <TextField
             label="Pesquisar"
@@ -173,7 +191,8 @@ export default function TransacoesPage() {
               noRowsLabel: "Nenhum registro encontrado",
               paginationRowsPerPage: "Linhas por página",
               paginationDisplayedRows: ({ from, to, count }) =>
-                `${from}-${to} de ${count !== -1 ? count : `mais de ${to}`
+                `${from}-${to} de ${
+                  count !== -1 ? count : `mais de ${to}`
                 }`,
             }}
           />
@@ -191,6 +210,7 @@ export default function TransacoesPage() {
         />
       )}
 
+      {/* Confirmação de exclusão */}
       <ConfirmDialog
         open={confirmOpen}
         title="Excluir transação"

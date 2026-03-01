@@ -26,8 +26,18 @@ import type {
   DashboardGastoPessoaDTO,
   DashboardTotaisResponseDTO
 } from "../../core/types/dashboard";
+import { useDocumentTitle } from "../../core/hooks/useDocumentTitle";
 
+/**
+ * Página principal do Dashboard.
+ *
+ * - Consome dados agregados da API
+ * - Exibe indicadores (receita, despesa, saldo)
+ * - Renderiza gráficos e totais consolidados
+ * - Permite filtro por período (dias)
+ */
 export default function DashboardPage() {
+  useDocumentTitle("Dashboard");
   const [resumo, setResumo] = useState<DashboardResumoDTO | null>(null);
   const [gastosDia, setGastosDia] = useState<DashboardGastoDiaDTO[]>([]);
   const [porPessoa, setPorPessoa] = useState<DashboardGastoPessoaDTO[]>([]);
@@ -36,11 +46,20 @@ export default function DashboardPage() {
   const [dias, setDias] = useState(7);
   const [loading, setLoading] = useState(true);
 
+  /**
+   * Carrega todos os dados do dashboard em paralelo.
+   */
   async function carregar() {
     try {
       setLoading(true);
 
-      const [resumoData, diaData, pessoaData, totaisPessoaData, totaisCategoriaData] = await Promise.all([
+      const [
+        resumoData,
+        diaData,
+        pessoaData,
+        totaisPessoaData,
+        totaisCategoriaData
+      ] = await Promise.all([
         obterResumo(dias),
         obterGastosPorDia(dias),
         obterGastosPorPessoa(dias),
@@ -58,6 +77,7 @@ export default function DashboardPage() {
     }
   }
 
+  // Recarrega dados sempre que o período mudar
   useEffect(() => {
     carregar();
   }, [dias]);
@@ -71,30 +91,29 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
 
-      {/* Filtro período */}
+      {/* Filtro de período */}
       <div className="flex gap-3">
         {[7, 30, 90].map((d) => (
           <button
             key={d}
             onClick={() => setDias(d)}
-            className={`px-4 py-2 rounded-lg transition ${dias === d
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 dark:bg-gray-700"
-              }`}
+            className={`px-4 py-2 rounded-lg transition ${
+              dias === d
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 dark:bg-gray-700"
+            }`}
           >
             Últimos {d} dias
           </button>
         ))}
       </div>
 
-      {/* Cards */}
+      {/* Cards de resumo */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
           <div className="flex justify-between">
-            <span className="text-gray-500 dark:text-gray-400">
-              Receitas
-            </span>
+            <span className="text-gray-500 dark:text-gray-400">Receitas</span>
             <TrendingUp className="text-green-500" />
           </div>
           <h2 className="text-2xl font-bold mt-4 text-green-600 dark:text-green-400">
@@ -104,9 +123,7 @@ export default function DashboardPage() {
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
           <div className="flex justify-between">
-            <span className="text-gray-500 dark:text-gray-400">
-              Despesas
-            </span>
+            <span className="text-gray-500 dark:text-gray-400">Despesas</span>
             <TrendingDown className="text-red-500" />
           </div>
           <h2 className="text-2xl font-bold mt-4 text-red-600 dark:text-red-400">
@@ -116,9 +133,7 @@ export default function DashboardPage() {
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
           <div className="flex justify-between">
-            <span className="text-gray-500 dark:text-gray-400">
-              Saldo
-            </span>
+            <span className="text-gray-500 dark:text-gray-400">Saldo</span>
             <Wallet className="text-blue-500" />
           </div>
           <h2 className="text-2xl font-bold mt-4 text-blue-600 dark:text-blue-400">
@@ -128,10 +143,10 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* Gráficos */}
+      {/* Gráficos e Totais */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-        {/* Linha */}
+        {/* Gráfico de Linha - Gastos por Dia */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
           <h3 className="font-semibold mb-6 text-gray-800 dark:text-white">
             Gastos por Dia
@@ -159,7 +174,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Pizza */}
+        {/* Gráfico de Pizza - Gastos por Pessoa */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
           <h3 className="font-semibold mb-6 text-gray-800 dark:text-white">
             Gastos por Pessoa
@@ -192,78 +207,83 @@ export default function DashboardPage() {
             </ResponsiveContainer>
           </div>
         </div>
-        
+
+        {/* Totais por Pessoa */}
         {totaisPessoa && (
-  <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-    <h3 className="font-semibold mb-6 text-gray-800 dark:text-white">
-      Totais por Pessoa
-    </h3>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
+            <h3 className="font-semibold mb-6 text-gray-800 dark:text-white">
+              Totais por Pessoa
+            </h3>
 
-    <div className="space-y-3">
-      {totaisPessoa.itens.map((item) => (
-        <div
-          key={item.nome}
-          className="flex justify-between border-b border-gray-200 dark:border-gray-700 pb-2"
-        >
-          <span className="text-gray-700 dark:text-gray-300">
-            {item.nome}
-          </span>
+            <div className="space-y-3">
+              {totaisPessoa.itens.map((item) => (
+                <div
+                  key={item.nome}
+                  className="flex justify-between border-b border-gray-200 dark:border-gray-700 pb-2"
+                >
+                  <span className="text-gray-700 dark:text-gray-300">
+                    {item.nome}
+                  </span>
 
-          <div className="text-right">
-            <p className="text-green-600 dark:text-green-400">
-              + {formatar(item.totalReceitas)}
-            </p>
-            <p className="text-red-600 dark:text-red-400">
-              - {formatar(item.totalDespesas)}
-            </p>
-            <p className="font-semibold text-blue-600 dark:text-blue-400">
-              {formatar(item.saldo)}
-            </p>
+                  <div className="text-right">
+                    <p className="text-green-600 dark:text-green-400">
+                      + {formatar(item.totalReceitas)}
+                    </p>
+                    <p className="text-red-600 dark:text-red-400">
+                      - {formatar(item.totalDespesas)}
+                    </p>
+                    <p className="font-semibold text-blue-600 dark:text-blue-400">
+                      {formatar(item.saldo)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+        )}
 
-{totaisCategoria && (
-  <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-    <h3 className="font-semibold mb-6 text-gray-800 dark:text-white">
-      Totais por Categoria
-    </h3>
+        {/* Totais por Categoria */}
+        {totaisCategoria && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
+            <h3 className="font-semibold mb-6 text-gray-800 dark:text-white">
+              Totais por Categoria
+            </h3>
 
-    <div className="space-y-3">
-      {totaisCategoria.itens.map((item) => (
-        <div
-          key={item.nome}
-          className="flex justify-between border-b border-gray-200 dark:border-gray-700 pb-2"
-        >
-          <span className="text-gray-700 dark:text-gray-300">
-            {item.nome}
-          </span>
+            <div className="space-y-3">
+              {totaisCategoria.itens.map((item) => (
+                <div
+                  key={item.nome}
+                  className="flex justify-between border-b border-gray-200 dark:border-gray-700 pb-2"
+                >
+                  <span className="text-gray-700 dark:text-gray-300">
+                    {item.nome}
+                  </span>
 
-          <div className="text-right">
-            <p className="text-green-600 dark:text-green-400">
-              + {formatar(item.totalReceitas)}
-            </p>
-            <p className="text-red-600 dark:text-red-400">
-              - {formatar(item.totalDespesas)}
-            </p>
-            <p className="font-semibold text-blue-600 dark:text-blue-400">
-              {formatar(item.saldo)}
-            </p>
+                  <div className="text-right">
+                    <p className="text-green-600 dark:text-green-400">
+                      + {formatar(item.totalReceitas)}
+                    </p>
+                    <p className="text-red-600 dark:text-red-400">
+                      - {formatar(item.totalDespesas)}
+                    </p>
+                    <p className="font-semibold text-blue-600 dark:text-blue-400">
+                      {formatar(item.saldo)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-        
+        )}
+
       </div>
     </div>
   );
 }
 
+/**
+ * Formata valores monetários em BRL.
+ */
 function formatar(valor: number) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",

@@ -18,6 +18,13 @@ interface Props {
   onSuccess: () => void;
 }
 
+/**
+ * Formulário de criação/edição de Transação.
+ *
+ * - Carrega pessoas e categorias dinamicamente
+ * - Converte data para ISO antes de enviar
+ * - Define tipo com base na finalidade da categoria
+ */
 export default function TransacaoForm({ transacao, onSuccess }: Props) {
   const [loading, setLoading] = useState(false);
   const [pessoas, setPessoas] = useState<PessoaDTO[]>([]);
@@ -51,8 +58,7 @@ export default function TransacaoForm({ transacao, onSuccess }: Props) {
 
         setPessoas(pessoasResult.items);
         setCategorias(categoriasResult.items);
-      } catch (error) {
-        console.error("Erro ao carregar dados:", error);
+      } catch {
         toastError("Erro ao carregar dados");
       }
     }
@@ -74,10 +80,11 @@ export default function TransacaoForm({ transacao, onSuccess }: Props) {
       }
 
       const payload = {
-  ...data,
-  tipo: categoriaSelecionada.finalidade,
-  dataCriacao: new Date(data.dataCriacao).toISOString(),
-};
+        ...data,
+        tipo: categoriaSelecionada.finalidade,
+        dataCriacao: new Date(data.dataCriacao).toISOString(),
+      };
+
       if (transacao) {
         await editarTransacao(transacao.id, payload);
         toastSuccess("Transação atualizada com sucesso!");
@@ -87,8 +94,7 @@ export default function TransacaoForm({ transacao, onSuccess }: Props) {
       }
 
       onSuccess();
-    } catch (error: any) {
-      console.error("Erro ao salvar:", error);
+    } catch {
       toastError("Erro ao salvar transação");
     } finally {
       setLoading(false);
@@ -96,9 +102,8 @@ export default function TransacaoForm({ transacao, onSuccess }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
-      {/* Data da Transação */}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 forced-margin-top">
+      {/* Data */}
       <div>
         <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
           Data da Transação
@@ -107,8 +112,8 @@ export default function TransacaoForm({ transacao, onSuccess }: Props) {
           type="date"
           {...register("dataCriacao")}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-    bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
-    focus:ring-2 focus:ring-blue-500 outline-none transition"
+          bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
+          focus:ring-2 focus:ring-blue-500 outline-none transition"
         />
         {errors.dataCriacao && (
           <p className="text-red-500 text-sm mt-1">
@@ -166,18 +171,13 @@ export default function TransacaoForm({ transacao, onSuccess }: Props) {
           bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
           focus:ring-2 focus:ring-blue-500 outline-none transition"
         >
-          <option value="">Selecione uma categoria</option>
+          <option value="">Selecione...</option>
           {categorias.map((c) => (
             <option key={c.id} value={c.id}>
               {c.descricao}
             </option>
           ))}
         </select>
-        {errors.categoriaId && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.categoriaId.message?.toString()}
-          </p>
-        )}
       </div>
 
       {/* Pessoa */}
@@ -191,18 +191,13 @@ export default function TransacaoForm({ transacao, onSuccess }: Props) {
           bg-white dark:bg-gray-700 text-gray-800 dark:text-white 
           focus:ring-2 focus:ring-blue-500 outline-none transition"
         >
-          <option value="">Selecione uma pessoa</option>
+          <option value="">Selecione...</option>
           {pessoas.map((p) => (
             <option key={p.id} value={p.id}>
               {p.nome}
             </option>
           ))}
         </select>
-        {errors.pessoaId && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.pessoaId.message?.toString()}
-          </p>
-        )}
       </div>
 
       <button

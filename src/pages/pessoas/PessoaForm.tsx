@@ -14,6 +14,12 @@ interface Props {
   onSuccess: () => void;
 }
 
+/**
+ * Formulário de criação/edição de Pessoa.
+ *
+ * - Integra react-hook-form + zod
+ * - Decide automaticamente entre create/update
+ */
 export default function PessoaForm({ pessoa, onSuccess }: Props) {
   const [loading, setLoading] = useState(false);
 
@@ -50,8 +56,8 @@ export default function PessoaForm({ pessoa, onSuccess }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 forced-margin-top">
+      {/* Nome */}
       <div>
         <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
           Nome
@@ -69,6 +75,7 @@ export default function PessoaForm({ pessoa, onSuccess }: Props) {
         )}
       </div>
 
+      {/* Idade */}
       <div>
         <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
           Idade

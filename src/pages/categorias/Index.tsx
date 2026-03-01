@@ -12,9 +12,21 @@ import {
 import CategoriaModal from "./CategoriaModal";
 import type { CategoriaDTO } from "../../core/types/categoria";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import { useDocumentTitle } from "../../core/hooks/useDocumentTitle";
 import { Plus, Pencil, Trash2, TrendingUp, TrendingDown } from "lucide-react";
 
+/**
+ * Página de listagem de Categorias.
+ *
+ * - Paginação server-side
+ * - Busca com filtro
+ * - Integra DataGrid (MUI)
+ * - Controla modal de criação/edição
+ * - Controla diálogo de confirmação para exclusão
+ */
+
 export default function CategoriasPage() {
+  useDocumentTitle("Categorias");
   const [rows, setRows] = useState<CategoriaDTO[]>([]);
   const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -33,6 +45,10 @@ export default function CategoriasPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  /**
+ * Carrega dados paginados da API.
+ * Atualiza linhas e total de registros.
+ */
   async function carregar() {
     setLoading(true);
 
@@ -50,10 +66,15 @@ export default function CategoriasPage() {
     }
   }
 
+  // Recarrega dados sempre que paginação ou busca mudarem
   useEffect(() => {
     carregar();
   }, [paginationModel.page, paginationModel.pageSize, search]);
 
+  /**
+ * Definição das colunas do DataGrid.
+ * Inclui renderização customizada e ações.
+ */
   const columns: GridColDef[] = [
     { field: "descricao", headerName: "Descrição", flex: 1 },
 
@@ -155,8 +176,7 @@ export default function CategoriasPage() {
               noRowsLabel: "Nenhum registro encontrado",
               paginationRowsPerPage: "Linhas por página",
               paginationDisplayedRows: ({ from, to, count }) =>
-                `${from}-${to} de ${
-                  count !== -1 ? count : `mais de ${to}`
+                `${from}-${to} de ${count !== -1 ? count : `mais de ${to}`
                 }`,
             }}
           />
@@ -173,6 +193,7 @@ export default function CategoriasPage() {
         />
       )}
 
+      {/* Diálogo de confirmação para exclusão */}
       <ConfirmDialog
         open={confirmOpen}
         title="Excluir categoria"

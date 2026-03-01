@@ -7,17 +7,27 @@ interface Props {
   roles?: string[];
 }
 
+/**
+ * Componente de proteção de rota.
+ *
+ * - Bloqueia acesso sem autenticação
+ * - Permite controle opcional por role
+ * - Aguarda carregamento inicial do contexto
+ */
 export function PrivateRoute({ children, roles }: Props) {
   const { token, user, loading } = useAuth();
 
+  // Aguarda validação inicial do token
   if (loading) {
-    return null; 
+    return null;
   }
 
+  // Não autenticado
   if (!token || !user) {
     return <Navigate to="/login" replace />;
   }
 
+  // Sem permissão por role
   if (roles && !roles.includes(user.role)) {
     return <Navigate to="/dashboard" replace />;
   }

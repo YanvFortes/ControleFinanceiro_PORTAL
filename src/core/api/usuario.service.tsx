@@ -1,11 +1,11 @@
 import { api } from "./axios";
 import type { UsuarioDTO, CriarUsuarioDTO, AtualizarUsuarioDTO } from "../types/usuario";
 
-export async function listarUsuarios(
-  page = 1,
-  pageSize = 10,
-  search?: string
-) {
+/**
+ * Service responsável pelo CRUD de Usuários.
+ */
+
+export async function listarUsuarios(page = 1, pageSize = 10, search?: string) {
   const response = await api.get("/Usuarios/Get", {
     params: { page, pageSize, search },
   });

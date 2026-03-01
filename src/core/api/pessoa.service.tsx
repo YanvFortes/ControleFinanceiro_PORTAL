@@ -1,11 +1,11 @@
 import { api } from "./axios";
 import type { PessoaDTO , CriarPessoaDTO } from "../types/pessoa";
 
-export async function listarPessoas(
-  page = 1,
-  pageSize = 10,
-  search?: string
-) {
+/**
+ * Service responsável pelo CRUD de Pessoas.
+ */
+
+export async function listarPessoas(page = 1, pageSize = 10, search?: string) {
   const response = await api.get("/Pessoas/Get", {
     params: { page, pageSize, search },
   });

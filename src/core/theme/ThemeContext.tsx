@@ -9,6 +9,12 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
+/**
+ * Provider responsável pelo controle global de tema.
+ *
+ * - Persiste preferência no localStorage
+ * - Controla classe "dark" no root (Tailwind)
+ */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(
     (localStorage.getItem("theme") as Theme) || "light"
@@ -26,6 +32,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  // Alterna entre light e dark
   function toggleTheme() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   }
@@ -37,6 +44,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Hook para acesso seguro ao contexto de tema.
+ */
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (!context)
